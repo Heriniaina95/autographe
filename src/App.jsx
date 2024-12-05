@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import api from "./api";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [inputText, setInputText] = useState("");
+    const [responseData, setResponseData] = useState("");
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            // Exemple : Envoi d'une requête POST à l'API
+            const response = await api.post("/", { text: inputText });
+            setResponseData(response.data.result); // Changez 'result' selon la réponse de votre API
+        } catch (error) {
+            console.error("Erreur lors de la requête :", error);
+            setResponseData("Une erreur est survenue !");
+        }
+    };
+
+    return (
+        <div style={{ fontFamily: "Arial", margin: "20px" }}>
+            <h1>TEXTE CORRECTION</h1>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    placeholder="Entrez du texte"
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    style={{ padding: "10px", width: "300px", marginBottom: "10px" }}
+                />
+                <br />
+                <button type="submit" style={{ padding: "10px 20px", cursor: "pointer" }}>
+                    Envoyer
+                </button>
+            </form>
+            <div>
+                <h2>Réponse de l'API :</h2>
+                <p>{responseData}</p>
+            </div>
+        </div>
+    );
 }
 
-export default App
+export default App;
